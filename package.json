@@ -1,0 +1,15 @@
+{
+  "name": "absence_cms",
+  "version": "1.0.0",
+  "description": "Absence to CMS System",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Andy Fitria",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^11.2.3",
+    "node-cache": "^5.1.2"
+  }
+}

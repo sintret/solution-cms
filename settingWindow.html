@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <title>Setting</title>
+</head>
+<body>
+<div class="container">
+    <form>
+        <div>
+            <label>IP</label>
+            <input type="text" id="ip" value="192.168.1.121" >
+        </div>
+        <div>
+            <label>Comm Key</label>
+            <input type="password" id="key" value="" >
+        </div>
+        <div>
+            <label>WEB CMS</label>
+            <input type="text" id="web" value="https://cmsqu.com" >
+        </div>
+        <div>
+            <label>API CMS</label>
+            <input type="text" id="api" value="" >
+        </div>
+        <div>
+            <button type="submit" waves-effect waves-light btn>Save</button>
+        </div>
+    </form>
+</div>
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script src="./js/jquery-3.5.1.min.js"></script>
+<script src="./js/materialize.min.js"></script>
+<script>
+    const electron = require('electron');
+    const {ipcRenderer} = electron;
+
+    var item = electron.remote.getCurrentWindow().custom;
+    var ip = $("#ip"),key = $("#key"), web = $("#web"), api = $("#api");
+
+    if(item){
+        ip.val(item.ip);
+        key.val(item.key);
+        web.val(item.web);
+        api.val(item.api)
+    }
+
+
+   $("form").on("submit", function (e) {
+        e.preventDefault();
+        let json = {
+            ip:ip.val(),
+            key:key.val(),
+            web:web.val(),
+            api:api.val()
+        }
+        ipcRenderer.send("setting", json);
+   });
+
+</script>
+</body>
+</html>
