@@ -4,12 +4,20 @@
   "description": "Absence to CMS System",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Solution Absence CMS\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds"
   },
   "author": "Andy Fitria",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "electron": "^11.2.3",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "node-html-parser": "^2.1.0"
+  },
+  "devDependencies": {
+    "electron-packager": "^15.2.0"
   }
 }

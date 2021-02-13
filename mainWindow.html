@@ -2,12 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./css/materialize.min.css">
     <title>Absence CMS</title>
+
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <link rel="stylesheet" href="./css/style.css.css">
+
 </head>
 <body>
-<h2>Absence CMS</h2>
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+        <h2 class="header center orange-text">Solution Absence CMS</h2>
+        <div class="row center">
+            <h5 class="header col s12 light">Automation absence service to our cloud system</h5>
+        </div>
+        <div class="row center">
+            <a href="" id="connect" class="btn-large waves-effect waves-light red">Not Connected</a>
+        </div>
+        <br><br>
 
+    </div>
+</div>
+
+<div class="container" id="list" style="display: none">
+    <table class="striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>PIN</th>
+            <th>Name</th>
+            <th>Date Time</th>
+            <th>Verified</th>
+            <th>Status</th>
+            <th>Workcode</th>
+        </tr>
+        </thead>
+        <tbody class="body">
+
+        </tbody>
+    </table>
+
+    <div id="test"></div>
+
+</div>
 
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 <script src="./js/jquery-3.5.1.min.js"></script>
@@ -15,7 +51,38 @@
 <script>
     const electron = require('electron');
     const {ipcRenderer} = electron;
+    var custom = electron.remote.getCurrentWindow().custom;
+    let items = custom.logs;
+    let users = custom.users;
 
+    if(custom.isConnected){
+        $("#connect").html("Connected");
+        $("#connect").removeClass("red");
+        $("#connect").addClass("green");
+    }
+    if(items.length > 0){
+        $("#list").show();
+        let html = '';
+        for(var i = 0; i < items.length;i++){
+            html += `<tr><td>${i+1}</td><td>${items[i].PIN}</td><td>${items[i].Name}</td><td>${items[i].DateTime}</td><td>${items[i].Verified}</td><td>${items[i].Status}</td><td>${items[i].WorkCode}</td></tr>`;
+        }
+
+        $(".body").html(html)
+
+    } else {
+        $("#notconnected").show();
+    }
+
+    function display_c(){
+        var refresh=1000; // Refresh rate in milli seconds
+        mytime=setTimeout('display_ct()',refresh)
+    }
+
+    function display_ct() {
+        var x = new Date()
+        document.getElementById('ct').innerHTML = x;
+        display_c();
+    }
 </script>
 </body>
 </html>

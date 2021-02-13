@@ -2,17 +2,25 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 var myCache = require("./cache");
+var solution = require('./solution')
 
 const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let mainWindow;
 let informationWindow;
 let settingWindow;
+let userWindow;
+let isConnected = false;
+let setting = {}
+let ip, key, web, api;
+let users;
+let logs = [];
+let SOLUTION;
 
 // SET ENV
 process.env.NODE_ENV = 'development';
 
-app.on("ready", ()=> {
+app.on("ready", async()=> {
 
     //main window
     mainWindow = new BrowserWindow({
@@ -35,8 +43,27 @@ app.on("ready", ()=> {
 
     if(myCache.has("setting")){
         //ipcRenderer.send("setting",myCache.get("setting"));
-        console.log(myCache.get("setting"))
-        settingWindow.webContents.send("setting", myCache.get("setting"));
+        setting = myCache.get("setting");
+        settingWindow.webContents.send("setting", setting);
+        ip = setting.ip;
+        key = setting.key;
+        web = setting.web;
+        api = setting.api;
+
+        isConnected = await SOLUTION.GET_SYNC_TIME() == "" ? false : true;
+        console.log(isConnected)
+        myCache.set("isConnected", isConnected);
+
+        //connect to finger print solution with ip
+        if(isConnected){
+            users = await SOLUTION.GET_USER_INFO();
+            logs = await SOLUTION.GET_LOG();
+        }
+        mainWindow.custom = {
+            isConnected : isConnected,
+            users : users,
+            logs:logs
+        }
     }
 
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate)
@@ -44,12 +71,55 @@ app.on("ready", ()=> {
 })
 
 //catch settings
-ipcMain.on('setting', function (e, item) {
+ipcMain.on('setting', async function (e, item) {
     console.log(item);
     myCache.set("setting", item);
+
+    SOLUTION =  new solution(item);
+    let data = await SOLUTION.GET_SYNC_TIME();
+    console.log("data :" +data);
+    isConnected = await SOLUTION.GET_SYNC_TIME() == "" ? false : true;
+    console.log(isConnected)
+    myCache.set("isConnected", isConnected);
+
+    //connect to finger print solution with ip
+    if(isConnected){
+        users = await SOLUTION.GET_USER_INFO();
+        logs = await SOLUTION.GET_LOG();
+        isConnected = isConnected;
+    }
+
+    mainWindow.custom = {
+        isConnected : isConnected,
+        logs:logs
+    }
     mainWindow.webContents.send("setting", item);
     settingWindow.close();
+    mainWindow.reload();
 })
+
+
+function userWindowFunction() {
+    //user window
+    userWindow = new BrowserWindow({
+        title : 'User Solution Machine',
+        webPreferences: {
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true,
+            enableRemoteModule: true
+        }
+    })
+    //load main window in userWindow.html
+    userWindow.loadURL(url.format({
+        pathname : path.join(__dirname,'userWindow.html'),
+        protocol: 'file:',
+        slashes : true
+    }));
+
+    console.log(users)
+    userWindow.custom = users;
+
+}
 
 function settingWindowFunction() {
     //setting window
@@ -87,7 +157,6 @@ function informationWindowFunction() {
         slashes : true,
     }));
 
-
     informationWindow.on("close", function () {
         informationWindow = null;
     })
@@ -101,6 +170,12 @@ const mainMenuTemplate = [
                 label : 'Setting',
                 click() {
                     settingWindowFunction();
+                }
+            },
+            {
+                label : 'User',
+                click() {
+                    userWindowFunction();
                 }
             },
             {

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Window</title>
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+        <div class="row center">
+            <h5 class="header col s12 light">User in solution Machine</h5>
+        </div>
+        <div class="row center" id="notconnected" style="display: none">
+            <a href="" id="connect" class="btn-large waves-effect waves-light red">Not available.</a>
+            <p>Make sure your setting is right</p>
+        </div>
+        <br><br>
+    </div>
+</div>
+<hr>
+<div class="container" id="list" style="display: none">
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>PIN</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>Group</th>
+                <th>Privilege</th>
+                <th>Card</th>
+            </tr>
+        </thead>
+        <tbody class="body">
+
+        </tbody>
+    </table>
+
+    <div id="test"></div>
+
+</div>
+
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script src="./js/jquery-3.5.1.min.js"></script>
+<script src="./js/materialize.min.js"></script>
+<script>
+    const electron = require('electron');
+    const {ipcRenderer} = electron;
+    var items = electron.remote.getCurrentWindow().custom;
+    if(items.length > 0){
+        $("#list").show();
+        let html = '';
+        for(var i = 0; i < items.length;i++){
+            html += `<tr><td>${i+1}</td><td>${items[i].PIN}</td><td>${items[i].Name}</td><td>${items[i].Password}</td><td>${items[i].Group}</td><td>${items[i].Privilege}</td><td>${items[i].Card}</td></tr>`;
+        }
+
+        $(".body").html(html)
+
+    } else {
+        $("#notconnected").show();
+    }
+</script>
+</body>
+</html>
