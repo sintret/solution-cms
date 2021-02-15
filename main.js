@@ -102,6 +102,8 @@ ipcMain.on('setting', async function (e, item) {
         settingWindow.webContents.send('progress', "Trying to connect " + setting.ip +"<br>");
         settingWindow.webContents.send('progress', "Please waiting again...<br>");
         let data = await SOLUTION.CONNECT_TO();
+        console.log(typeof  data)
+        console.log(data+"data")
         if(data){
             settingWindow.webContents.send('progress', data + "<br>");
             settingWindow.webContents.send('progress', "successfully connect to "+setting.ip+"<br>");

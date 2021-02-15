@@ -32,12 +32,16 @@ var SOLUTION = function (SETTING) {
     this.CONNECT_TO = async() => {
         try{
             let resp = await axios.get(this.URL);
-            return resp.headers.server;
+            console.log(resp)
+            let headers = resp.headers;
+            if(headers.hasOwnProperty("server")){
+                return resp.headers.server;
+            } else {
+                return "ok";
+            }
         } catch (e) {
             return "";
         }
-        let resp= await axios.post(this.URL+start_point, soap_request, config);
-        return resp.headers.server;
     }
 
     this.GET_SIDIK_JARI = async (PIN) => {
