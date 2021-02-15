@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Absence CMS</title>
-
-    <link rel="stylesheet" href="./css/materialize.min.css">
-    <link rel="stylesheet" href="./css/style.css.css">
+    <link rel="stylesheet" href="css/materialize.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 <body>
@@ -36,9 +35,7 @@
             <th>Workcode</th>
         </tr>
         </thead>
-        <tbody class="body">
-
-        </tbody>
+        <tbody class="body"></tbody>
     </table>
 
     <div id="test"></div>
@@ -46,32 +43,35 @@
 </div>
 
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-<script src="./js/jquery-3.5.1.min.js"></script>
-<script src="./js/materialize.min.js"></script>
+<script src="js/jquery-3.5.1.min.js"></script>
+<script src="js/materialize.min.js"></script>
 <script>
     const electron = require('electron');
     const {ipcRenderer} = electron;
-    var custom = electron.remote.getCurrentWindow().custom;
-    let items = custom.logs;
-    let users = custom.users;
+    let custom = electron.remote.getCurrentWindow().custom || {};
+    if(custom.hasOwnProperty("logs")) {
+        let items = custom.logs;
+        let users = custom.users;
 
-    if(custom.isConnected){
-        $("#connect").html("Connected");
-        $("#connect").removeClass("red");
-        $("#connect").addClass("green");
-    }
-    if(items.length > 0){
-        $("#list").show();
-        let html = '';
-        for(var i = 0; i < items.length;i++){
-            html += `<tr><td>${i+1}</td><td>${items[i].PIN}</td><td>${items[i].Name}</td><td>${items[i].DateTime}</td><td>${items[i].Verified}</td><td>${items[i].Status}</td><td>${items[i].WorkCode}</td></tr>`;
+        if(custom.isConnected){
+            $("#connect").html("Connected");
+            $("#connect").removeClass("red");
+            $("#connect").addClass("green");
         }
+        if(items.length > 0){
+            $("#list").show();
+            let html = '';
+            for(var i = 0; i < items.length;i++){
+                html += `<tr><td>${i+1}</td><td>${items[i].PIN}</td><td>${items[i].Name}</td><td>${items[i].DateTime}</td><td>${items[i].Verified}</td><td>${items[i].Status}</td><td>${items[i].WorkCode}</td></tr>`;
+            }
 
-        $(".body").html(html)
+            $(".body").html(html)
 
-    } else {
-        $("#notconnected").show();
+        } else {
+            $("#notconnected").show();
+        }
     }
+
 
     function display_c(){
         var refresh=1000; // Refresh rate in milli seconds

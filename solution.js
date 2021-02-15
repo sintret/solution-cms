@@ -21,8 +21,23 @@ var SOLUTION = function (SETTING) {
         var config = {
             headers: {'Content-Type': 'text/xml'}
         };
+        try {
+            let resp= await axios.post(this.URL+start_point, soap_request, config);
+            return  resp.data;
+        } catch (e){
+            return  "";
+        }
+    }
+    
+    this.CONNECT_TO = async() => {
+        try{
+            let resp = await axios.get(this.URL);
+            return resp.headers.server;
+        } catch (e) {
+            return "";
+        }
         let resp= await axios.post(this.URL+start_point, soap_request, config);
-        return  resp.data;
+        return resp.headers.server;
     }
 
     this.GET_SIDIK_JARI = async (PIN) => {
